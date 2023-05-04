@@ -14,11 +14,11 @@ BEGIN
     DECLARE total_projects INT DEFAULT 0;
     DECLARE current_project INT DEFAULT 0;
 
-    SELECT COUNT(id) INTO total_projects FROM `projects` WHERE `name` = project_name;
+    SELECT COUNT(*) INTO total_projects FROM `projects` WHERE `name` = project_name;
     IF total_projects = 0 THEN
         INSERT INTO `projects`(`name`) VALUES (project_name);
     END IF;
-    SELECT id INTO current_project FROM `projects` WHERE `name` = project_name;
+    SELECT `id` INTO current_project FROM `projects` WHERE `name` = project_name;
     INSERT INTO `corrections` (`user_id`, current_project, `score`) VALUES (user_id, current_project, score);
 END //
 DELIMITER ;
