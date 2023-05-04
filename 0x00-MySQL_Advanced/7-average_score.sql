@@ -4,16 +4,10 @@ DROP PROCEDURE IF EXISTS ComputeAverageScoreForUser;
 DELIMITER //
 CREATE PROCEDURE ComputeAverageScoreForUser (user_id INT)
 BEGIN
-    DECLARE total_score INT DEFAULT 0;
-    DECLARE projects_count INT DEFAULT 0;
     DECLARE average_score FLOAT DEFAULT 0;
 
     SELECT AVG(score)
         INTO average_score
-        FROM `corrections`
-        WHERE `corrections`.user_id = user_id;
-    SELECT COUNT(*)
-        INTO projects_count
         FROM `corrections`
         WHERE `corrections`.user_id = user_id;
 
