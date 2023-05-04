@@ -19,6 +19,6 @@ BEGIN
         INSERT INTO `projects`(`name`) VALUES (project_name);
     END IF;
     SELECT `id` INTO current_project FROM `projects` WHERE `name` = project_name;
-    INSERT INTO `corrections` (`user_id`, current_project, `score`) VALUES (user_id, current_project, score);
+    INSERT INTO `corrections` (`user_id`, `project_id`, `score`) VALUES (user_id, current_project, score);
 END //
 DELIMITER ;
