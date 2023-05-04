@@ -10,9 +10,14 @@ BEGIN
         INTO weighted_average
         FROM `corrections` LEFT JOIN `projects`
             ON `corrections`.`project_id` = `projects`.`id` WHERE `corrections`.`user_id` = user_id;
-
-    UPDATE `users`
+    IF weighted_average IS NOT NULL THEN
+        UPDATE `users`
             SET `users`.`average_score` = IFNULL(weighted_average, 0)
             WHERE `users`.`id` = user_id;
+    ELSE
+        UPDATE users
+        SET users.average_score = 0
+        WHERE users.id = user_id;
+    END IF;
 END //
 DELIMITER ;
