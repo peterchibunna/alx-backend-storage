@@ -7,7 +7,5 @@ Module 11
 def schools_by_topic(mongo_collection, topic):
     """Returns the list of school having a specific topic
     """
-    return [
-        document for document in
-        mongo_collection.find({"topic": {"$elemMatch": {"$eq": topic}}})
-    ]
+    results = mongo_collection.find({'topics': {'$elemMatch': {'$eq': topic}}})
+    return [document for document in results]
