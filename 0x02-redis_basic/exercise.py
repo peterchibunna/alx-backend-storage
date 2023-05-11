@@ -38,7 +38,14 @@ def count_calls(method: typing.Callable) -> typing.Callable:
 
 
 def call_history(method: typing.Callable) -> typing.Callable:
-    """"""
+    """decorator to store the history of inputs and outputs for a
+        particular function.
+        Everytime the original function will be called, we will add its input
+        parameters to one list in redis, and store its output into another
+        list.
+        In call_history, use the decorated function’s qualified name and
+        append ":inputs" and ":outputs" to create input and output list keys,
+        respectively"""
 
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs) -> typing.Any:
