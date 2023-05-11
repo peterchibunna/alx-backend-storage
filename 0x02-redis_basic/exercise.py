@@ -22,6 +22,7 @@ def count_calls(method: typing.Callable) -> typing.Callable:
     Create and return function that increments the count for that key every
     time the method is called and returns the value returned by the original
     method."""
+
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs) -> typing.Any:
         """implement a system to count how many times
@@ -30,6 +31,34 @@ def count_calls(method: typing.Callable) -> typing.Callable:
         if isinstance(self._redis, redis.Redis):
             self._redis.incr(method.__qualname__)
         return method(self, *args, **kwargs)
+
+    return wrapper
+
+
+def call_history(method: typing.Callable) -> typing.Callable:
+    """"""
+
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs) -> typing.Any:
+        """decorator to store the history of inputs and outputs for a
+        particular function.
+        Everytime the original function will be called, we will add its input
+        parameters to one list in redis, and store its output into another
+        list.
+        In call_history, use the decorated function’s qualified name and
+        append ":inputs" and ":outputs" to create input and output list keys,
+        respectively
+        """
+        key_input = '{}:inputs'.format(method.__qualname__)
+        key_output = '{}:outputs'.format(method.__qualname__)
+        if isinstance(self._redis, redis.Redis):
+            self._redis.rpush(key_input, str(args))
+
+        execution = method(self, *args, **kwargs)
+        if isinstance(self._redis, redis.Redis):
+            self._redis.rpush(key_output, execution)
+        return execution
+
     return wrapper
 
 
@@ -40,6 +69,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb(asynchronous=True)
 
+    @call_history
     @count_calls
     def store(self, data: typing.Union[str, bytes, int, float]) -> str:
         """0. Writing strings to Redis
