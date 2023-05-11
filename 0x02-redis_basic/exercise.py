@@ -28,7 +28,7 @@ def count_calls(method: typing.Callable) -> typing.Callable:
         methods of the Cache class are called.
         """
         if isinstance(self._redis, redis.Redis):
-            self._redis.incrby(method.__qualname__, amount=1)
+            self._redis.incr(method.__qualname__)
         return method(self, *args, **kwargs)
     return wrapper
 
