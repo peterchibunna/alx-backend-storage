@@ -4,9 +4,33 @@
 - Learn how to use redis for basic operations
 - Learn how to use redis as a simple cache
 """
+import functools
 import redis
 import typing
 import uuid
+
+
+def count_calls(method: typing.Callable) -> typing.Callable:
+    """In this task, we will implement a system to count how many times methods
+    of the Cache class are called.
+    Above Cache define a count_calls decorator that takes a single method
+    Callable argument and returns a Callable.
+
+    As a key, use the qualified name of method using the __qualname__ dunder
+    method.
+
+    Create and return function that increments the count for that key every
+    time the method is called and returns the value returned by the original
+    method."""
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs) -> typing.Any:
+        """implement a system to count how many times
+        methods of the Cache class are called.
+        """
+        if isinstance(self._redis, redis.Redis):
+            self._redis.incrby(method.__qualname__, amount=1)
+        return method(self, *args, **kwargs)
+    return wrapper
 
 
 class Cache:
@@ -16,6 +40,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb(asynchronous=True)
 
+    @count_calls
     def store(self, data: typing.Union[str, bytes, int, float]) -> str:
         """0. Writing strings to Redis
         """
