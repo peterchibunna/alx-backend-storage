@@ -22,3 +22,18 @@ class Cache:
         key = uuid.uuid5(uuid.NAMESPACE_X500, 'redis_test').__str__()
         self._redis.set(key, data)
         return key
+
+    def get(self, key: str, fn: typing.Callable = None) \
+            -> typing.Union[str, bytes, int, float]:
+        """1. Reading from Redis and recovering original type
+        """
+        data = self._redis.get(key)
+        return fn(data) if fn else data
+
+    def get_str(self, key: str) -> str:
+        """force the get to be a `string`"""
+        return self.get(key).__str__()
+
+    def get_int(self, key: str) -> int:
+        """force the get to return an `int`"""
+        return int(self.get(key))
