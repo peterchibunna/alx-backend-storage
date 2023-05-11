@@ -15,5 +15,6 @@ print(s3)
 inputs = cache._redis.lrange("{}:inputs".format(cache.store.__qualname__), 0, -1)
 outputs = cache._redis.lrange("{}:outputs".format(cache.store.__qualname__), 0, -1)
 
+
 print("inputs: {}".format(inputs))
 print("outputs: {}".format(outputs))

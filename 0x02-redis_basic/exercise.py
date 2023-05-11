@@ -5,7 +5,9 @@
 - Learn how to use redis as a simple cache
 """
 import functools
+import random
 import redis
+import string
 import typing
 import uuid
 
@@ -62,6 +64,26 @@ def call_history(method: typing.Callable) -> typing.Callable:
     return wrapper
 
 
+def replay(fn: typing.Callable) -> typing.Any:
+    """implement a replay function to display the history of calls of a
+    particular function.
+    """
+    if fn is not None and hasattr(fn, '__self__'):
+        store = fn.__self__._redis
+        if isinstance(store, redis.Redis):
+            method = fn.__qualname__
+            inputs = store.lrange("{}:inputs".format(method), 0, -1)
+            outputs = store.lrange("{}:outputs".format(method), 0, -1)
+            try:
+                print('{} was called {} times:'.format(method, len(inputs)))
+                for input, output in zip(inputs, outputs):
+                    print('{}(*{}) -> {}'.format(
+                        method, input.decode("utf-8"), output))
+            except Exception:
+                pass
+    return
+
+
 class Cache:
     def __init__(self) -> None:
         """initialise the redis cache
@@ -74,7 +96,10 @@ class Cache:
     def store(self, data: typing.Union[str, bytes, int, float]) -> str:
         """0. Writing strings to Redis
         """
-        key = uuid.uuid5(uuid.NAMESPACE_X500, 'redis_test').__str__()
+        n = ''.join(
+            random.choices(string.ascii_lowercase + string.hexdigits, k=10))
+        key = uuid.uuid5(uuid.NAMESPACE_X500, '{}'.format(n)).__str__()
+        # fixed: key wasn't changing after instantiation
         self._redis.set(key, data)
         return key
 
