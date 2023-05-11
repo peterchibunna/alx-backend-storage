@@ -18,12 +18,12 @@ def cache_the_page(method: typing.Callable) -> typing.Callable:
     def wrapper(url: str) -> str:
         """module comment
         """
-        cache.incr('visited:{}'.format(url))
+        cache.incr(f'count:{url}')
         content = cache.get('content:{}'.format(url))
         if content is not None:
             return content.decode('utf-8')
         content = method(url)
-        cache.set('visited:{}'.format(url), 0)
+        cache.set(f'count:{url}', 0)
         cache.setex('content:{}'.format(url), 10, content)
         return content
     return wrapper
