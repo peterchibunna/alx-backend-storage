@@ -83,9 +83,8 @@ def replay(fn: typing.Callable) -> typing.Any:
             outputs = store.lrange("{}:outputs".format(method), 0, -1)
             try:
                 print('{} was called {} times:'.format(method, len(inputs)))
-                for input, output in zip(inputs, outputs):
-                    print('{}(*{}) -> {}'.format(
-                        method, input.decode("utf-8"), output))
+                for _input, output in zip(inputs, outputs):
+                    print('{}(*{}) -> {}'.format(method, str(_input), output))
             except Exception:
                 pass
     return
