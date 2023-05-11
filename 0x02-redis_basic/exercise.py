@@ -19,6 +19,6 @@ class Cache:
     def store(self, data: typing.Union[str, bytes, int, float]) -> str:
         """0. Writing strings to Redis
         """
-        key = uuid.uuid4().__str__()
+        key = uuid.uuid5(uuid.NAMESPACE_X500, 'redis_test').__str__()
         self._redis.set(key, data)
         return key
