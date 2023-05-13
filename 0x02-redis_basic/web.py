@@ -20,12 +20,13 @@ def cache_the_page(method: typing.Callable) -> typing.Callable:
         """
         cache.incr(f'count:{url}')
         content = cache.get('content:{}'.format(url))
+        # cache.expire('content:{}'.format(url), 10)
+        cache.setex('content:{}'.format(url), 10, content)
         if content is not None:
             return content.decode('utf-8')
         content = method(url)
         cache.set(f'count:{url}', 0)
-        cache.setex('content:{}'.format(url), 10, content)
-        cache.expire('content:{}'.format(url), 10)
+
         return content
     return wrapper
 
