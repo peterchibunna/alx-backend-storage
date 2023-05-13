@@ -31,5 +31,7 @@ def cache_the_page(method: typing.Callable) -> typing.Callable:
 
 @cache_the_page
 def get_page(url: str) -> str:
+    """The main function that retrieves a web page
+    """
     content = requests.get(url=url)
     return content.text
