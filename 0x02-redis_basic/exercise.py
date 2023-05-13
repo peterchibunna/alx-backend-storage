@@ -92,6 +92,9 @@ def replay(fn: typing.Callable) -> typing.Any:
 
 
 class Cache:
+    """The cache class
+    """
+
     def __init__(self) -> None:
         """initialise the redis cache
         """
