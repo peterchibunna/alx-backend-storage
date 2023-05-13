@@ -25,6 +25,7 @@ def cache_the_page(method: typing.Callable) -> typing.Callable:
         content = method(url)
         cache.set(f'count:{url}', 0)
         cache.setex('content:{}'.format(url), 10, content)
+        cache.expire('content:{}'.format(url), 10)
         return content
     return wrapper
 
